@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlatformerController : MonoBehaviour
@@ -14,21 +15,33 @@ public class PlatformerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private float moveInput;
-    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        
+
         // Set to Dynamic with gravity
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.gravityScale = 3f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
     }
     
     void Update()
     {
         // Get horizontal input
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        if (moveInput != 0)
+        {
+            if (moveInput < 0)
+            {
+                GetComponent<SpriteRenderer>().flipX = true;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().flipX = false;
+            }
+        }
         
         // Check if grounded
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
@@ -43,7 +56,7 @@ public class PlatformerController : MonoBehaviour
     void FixedUpdate()
     {
         // Apply horizontal movement
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+        rb.linearVelocityX = moveInput * moveSpeed;
     }
     
     // Visualise ground check in editor
